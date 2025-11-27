@@ -1,5 +1,3 @@
-
-
 let extConfig = JSON.parse(localStorage.getItem('sigmaMarketExtConfig')) || {
     noDelay: false,
     autoAmount: false,
@@ -10,9 +8,9 @@ let sessionExtConfig = {
     firestoreDB: null,
 };
 
-
-
-
+// let extConfig = {
+//     noDelay: false,
+// };
 function saveExtConfig() {
     localStorage.setItem('sigmaMarketExtConfig', JSON.stringify(extConfig));
 }
@@ -133,14 +131,14 @@ window.setTimeout = (handler, timeout, ...args) => {
         timeout,
         ...args
     );
-
+    // log the timeout
     console.log(`Set timeout with id ${id}, timeout ${timeout}ms, handler ${handler.name || 'anonymous'}`);
 
-
+    // return a promise that resolves after the timeout
     return id;
 };
 
-async function createExtConfigUI() {
+function createExtConfigUI() {
     const gameContainer = document.querySelector("#gameBox > div:nth-child(7)");
     const extConfigDiv = document.createElement("div");
     extConfigDiv.style = "display: flex; flex-direction: column;";
@@ -150,7 +148,7 @@ async function createExtConfigUI() {
     extConfigTitle.textContent = "Extra Config";
     extConfigDiv.appendChild(extConfigTitle);
 
-
+    // no delay toggle
     const noDelayToggle = document.createElement("button");
     noDelayToggle.style = "font-size:24px; border-radius: 8px;";
     noDelayToggle.textContent = `No Spin Delay: ${extConfig.noDelay ? "ON" : "OFF"}`;
@@ -161,7 +159,7 @@ async function createExtConfigUI() {
     });
     extConfigDiv.appendChild(noDelayToggle);
 
-
+    // auto amount input and toggle
     const autoAmountContainer = document.createElement("div");
     autoAmountContainer.style = "display: flex; flex-direction: row; align-items: center;";
     extConfigDiv.appendChild(autoAmountContainer);
@@ -183,7 +181,7 @@ async function createExtConfigUI() {
     autoAmountButton.style = "font-size:22px; font-weight:600; margin-bottom:0;";
     autoAmountButton.textContent = `Auto Set Amount ${extConfig.autoAmount ? extConfig.autoAmountValue + "%" : "OFF"}`;
     autoAmountButton.addEventListener("click", function() {
-
+        // extConfig.autoAmount = parseInt(this.parentElement.querySelector("input").value, 10) || 0;
         extConfig.autoAmount = !extConfig.autoAmount;
         this.textContent = `Auto Set Amount ${extConfig.autoAmount ? extConfig.autoAmountValue + "%" : "OFF"}`;
         autoSetAmountIfEnabled();
@@ -191,7 +189,7 @@ async function createExtConfigUI() {
     });
     autoAmountContainer.appendChild(autoAmountButton);
 
-
+    // get jackpot button
     const getJackpotButton = document.createElement("button");
     getJackpotButton.style = "font-size:22px; font-weight:600; margin-top:10px;";
     getJackpotButton.textContent = `Get Jackpot`;
@@ -201,14 +199,14 @@ async function createExtConfigUI() {
         Math.random = () => 0.9999999;
         document.querySelector("#spin").click();
         await new Promise(resolve => setTimeout(resolve, 50));
-
+        // document.querySelector("body > div").remove(); // remove popup
         Math.random = originalRandom;
     });
     extConfigDiv.appendChild(getJackpotButton);
 
     gameContainer.appendChild(extConfigDiv);
 
-
+    // set player balance username input, input and button
     const setBalanceContainer = document.createElement("div");
     setBalanceContainer.style = "display: flex; flex-direction: row; align-items: center;";
     extConfigDiv.appendChild(setBalanceContainer);
@@ -235,7 +233,7 @@ async function createExtConfigUI() {
     });
     setBalanceContainer.appendChild(setBalanceButton);
 
-
+    // set global boost input and button
     const setBoostContainer = document.createElement("div");
     setBoostContainer.style = "display: flex; flex-direction: row; align-items: center;";
     extConfigDiv.appendChild(setBoostContainer);
@@ -260,12 +258,13 @@ async function createExtConfigUI() {
     customStyleConfig.innerHTML = `body > div{display:none !important;}`;
     document.head.appendChild(customStyleConfig);
 
-    await new Promise(resolve => setTimeout(resolve, 100));
-    const originalConfetti = window.confetti;
-    window.confetti = function(data) { return originalConfetti(scanConfetti(data)) };
+    setTimeout(function() {
+        const originalConfetti = window.confetti;
+        window.confetti = function(data) { return originalConfetti(scanConfetti(data)) };
+    }, 100);
 }
 
 initFirebase();
-await createExtConfigUI();
+createExtConfigUI();
 
 autoSetAmountIfEnabled();
