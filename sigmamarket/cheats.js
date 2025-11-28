@@ -144,13 +144,13 @@ function createExtConfigUI() {
     extConfigDiv.style = "display: flex; flex-direction: column;";
     
     const extConfigTitle = document.createElement("p");
-    extConfigTitle.style = "font-size:28px; font-weight:200; display:block !important; width:280px;";
+    extConfigTitle.style = "display:block !important; width:280px;";
     extConfigTitle.textContent = "Extra Config";
     extConfigDiv.appendChild(extConfigTitle);
 
     // no delay toggle
     const noDelayToggle = document.createElement("button");
-    noDelayToggle.style = "font-size:24px; border-radius: 8px;";
+    noDelayToggle.style = "border-radius: 8px;";
     noDelayToggle.textContent = `No Spin Delay: ${extConfig.noDelay ? "ON" : "OFF"}`;
     noDelayToggle.addEventListener("click", function() {
         extConfig.noDelay = !extConfig.noDelay;
@@ -166,7 +166,7 @@ function createExtConfigUI() {
 
     const autoAmountInput = document.createElement("input");
     autoAmountInput.type = "number";
-    autoAmountInput.style = "font-size:24px; border-radius: 8px; width: 100px; margin-left: 10px;";
+    autoAmountInput.style = "border-radius: 8px; width: 100px; margin-left: 10px;";
     autoAmountInput.placeholder = "Enter percentage";
     autoAmountInput.value = extConfig.autoAmountValue || 0;
     autoAmountInput.addEventListener("change", function() {
@@ -178,7 +178,7 @@ function createExtConfigUI() {
     autoAmountContainer.appendChild(autoAmountInput);
 
     const autoAmountButton = document.createElement("button");
-    autoAmountButton.style = "font-size:22px; font-weight:600; margin-bottom:0;";
+    autoAmountButton.style = "margin-bottom:0;";
     autoAmountButton.textContent = `Auto Set Amount ${extConfig.autoAmount ? extConfig.autoAmountValue + "%" : "OFF"}`;
     autoAmountButton.addEventListener("click", function() {
         // extConfig.autoAmount = parseInt(this.parentElement.querySelector("input").value, 10) || 0;
@@ -191,7 +191,7 @@ function createExtConfigUI() {
 
     // get jackpot button
     const getJackpotButton = document.createElement("button");
-    getJackpotButton.style = "font-size:22px; font-weight:600; margin-top:10px;";
+    getJackpotButton.style = "margin-top:10px;";
     getJackpotButton.textContent = `Get Jackpot`;
     getJackpotButton.addEventListener("click", async function() {
         setAmount(getPlayerData().balance);
@@ -213,20 +213,20 @@ function createExtConfigUI() {
 
     const setUsernameInput = document.createElement("input");
     setUsernameInput.type = "text";
-    setUsernameInput.style = "font-size:24px; border-radius: 8px; width: 150px; margin-right: 10px;";
+    setUsernameInput.style = "border-radius: 8px; width: 150px; margin-right: 10px;";
     setUsernameInput.placeholder = "Enter username";
     setUsernameInput.value = "";
     setBalanceContainer.appendChild(setUsernameInput);
 
     const setBalanceInput = document.createElement("input");
     setBalanceInput.type = "number";
-    setBalanceInput.style = "font-size:24px; border-radius: 8px; width: 100px; margin-right: 10px;";
+    setBalanceInput.style = "border-radius: 8px; width: 100px; margin-right: 10px;";
     setBalanceInput.placeholder = "Enter balance";
     setBalanceInput.value = 0;
     setBalanceContainer.appendChild(setBalanceInput);
 
     const setBalanceButton = document.createElement("button");
-    setBalanceButton.style = "font-size:22px; font-weight:600;";
+    setBalanceButton.style = "";
     setBalanceButton.textContent = `Set Balance`;
     setBalanceButton.addEventListener("click", async function() {
         await setPlayerBalance(this.parentElement.querySelector("input[type='text']").value, parseInt(this.parentElement.querySelector("input[type='number']").value, 10) || 0);
@@ -241,13 +241,13 @@ function createExtConfigUI() {
     const setBoostInput = document.createElement("input");
     setBoostInput.type = "number";
     setBoostInput.step = "0.001";
-    setBoostInput.style = "font-size:24px; border-radius: 8px; width: 100px; margin-right: 10px;";
+    setBoostInput.style = "border-radius: 8px; width: 100px; margin-right: 10px;";
     setBoostInput.placeholder = "Enter boost";
     setBoostInput.value = 0;
     setBoostContainer.appendChild(setBoostInput);
 
     const setBoostButton = document.createElement("button");
-    setBoostButton.style = "font-size:22px; font-weight:600;";
+    setBoostButton.style = "";
     setBoostButton.textContent = `Set Global Boost`;
     setBoostButton.addEventListener("click", async function() {
         await setGlobalBoost(parseFloat(this.parentElement.querySelector("input[type='number']").value));
