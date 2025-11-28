@@ -56,6 +56,9 @@ function initFirebase() {
         console.log("Firebase initialized");
         console.log("app", app);
         console.log("db", db);
+
+        // const colRef = collection(db, "playerdata");
+        // console.log("colRef", colRef);
     })();
 }
 
@@ -78,6 +81,9 @@ async function setPlayerBalance(username, balance) {
     const playerDocs = await sessionExtConfig.firestoreFunctions.getDocs(sessionExtConfig.firestoreFunctions.collection(sessionExtConfig.firestoreDB, "playerdata"));
     const playerInfos = playerDocs.docs.map(doc => ({id: doc.id, ...doc.data()}));
     console.log(playerInfos);
+    // const allDocs = await sessionExtConfig.firestoreFunctions.getDocs(sessionExtConfig.firestoreFunctions.collection(sessionExtConfig.firestoreDB, "_"));
+    // const allInfos = allDocs.docs.map(doc => ({id: doc.id, ...doc.data()}));
+    // console.log(allInfos);
     await sessionExtConfig.firestoreFunctions.updateDoc(playerRef, {
         balance: balance,
     });
@@ -88,6 +94,36 @@ async function setGlobalBoost(boost) {
     await sessionExtConfig.firestoreFunctions.updateDoc(boostRef, {
         boost: boost,
         lastUpdated: Date.now()
+    });
+}
+
+async function refreshPlayerData() {
+    const UserDataTableBody = document.querySelector("#userDataBody");
+    const playerDocs = await sessionExtConfig.firestoreFunctions.getDocs(sessionExtConfig.firestoreFunctions.collection(sessionExtConfig.firestoreDB, "playerdata"));
+    const playerInfos = playerDocs.docs.map(doc => ({id: doc.id, ...doc.data()}));
+    console.log(playerInfos);
+    playerInfos.forEach(playerInfo => {
+        const UserDataTableBodyRow = document.createElement("tr");
+        UserDataTableBody.appendChild(UserDataTableBodyRow);
+
+        const UserDataTableBodyUsername = document.createElement("td");
+        UserDataTableBodyUsername.textContent = playerInfo.id;
+        UserDataTableBodyRow.appendChild(UserDataTableBodyUsername);
+
+        const UserDataTableBodyPins = document.createElement("td");
+        UserDataTableBodyPins.textContent = playerInfo.pin;
+        UserDataTableBodyRow.appendChild(UserDataTableBodyPins);
+
+        // input balance
+        const UserDataTableBodyBalance = document.createElement("input");
+        UserDataTableBodyBalance.style = "background-color: #000; color: #fff; border-radius: 8px; width: 100px; margin-left: 10px;";
+        UserDataTableBodyBalance.type = "number";
+        UserDataTableBodyBalance.value = playerInfo.balance;
+        UserDataTableBodyBalance.addEventListener("change", function() {
+            console.log(this.value);
+            setPlayerBalance(playerInfo.id, parseInt(this.value, 10) || 0);
+        })
+        UserDataTableBodyRow.appendChild(UserDataTableBodyBalance);
     });
 }
 
@@ -144,7 +180,7 @@ function createExtConfigUI() {
     extConfigDiv.style = "display: flex; flex-direction: column;";
     
     const extConfigTitle = document.createElement("p");
-    extConfigTitle.style = "display:block !important; width:280px;";
+    extConfigTitle.style = "font-size:28px; font-weight:200; display:block !important; width:280px;";
     extConfigTitle.textContent = "Extra Config";
     extConfigDiv.appendChild(extConfigTitle);
 
@@ -264,7 +300,59 @@ function createExtConfigUI() {
     }, 100);
 }
 
+function createUserDataUI() {
+    // Placeholder for future user data UI
+    const gameContainer = document.querySelector("#gameBox > div:nth-child(7)");
+    const userDataDiv = document.createElement("div");
+    userDataDiv.style = "display: flex; flex-direction: column;";
+    gameContainer.appendChild(userDataDiv);
+
+    const userDataTitle = document.createElement("p");
+    userDataTitle.style = "font-size:28px; font-weight:200; display:block !important; width:280px;";
+    userDataTitle.textContent = "User Data";
+    userDataDiv.appendChild(userDataTitle);
+
+    const UserDataTable = document.createElement("table");
+    UserDataTable.style = "width: 100%; border-collapse: collapse;";
+    userDataDiv.appendChild(UserDataTable);
+
+    const UserDataTableHead = document.createElement("thead");
+    UserDataTableHead.addEventListener("click", function() {
+        // toggle display of table data
+        const UserDataTableBody = document.querySelector("#userDataBody");
+        if (UserDataTableBody.style.display === "none") {
+            UserDataTableBody.style.display = "table-row-group";
+        } else {
+            UserDataTableBody.style.display = "none";
+        }
+    });
+    UserDataTable.appendChild(UserDataTableHead);
+
+    const UserDataTableHeadRow = document.createElement("tr");
+    UserDataTableHead.appendChild(UserDataTableHeadRow);
+
+    const UserDataTableHeadUsername = document.createElement("th");
+    UserDataTableHeadUsername.textContent = "Username";
+    UserDataTableHeadRow.appendChild(UserDataTableHeadUsername);
+
+    const UserDataTableHeadPins = document.createElement("th");
+    UserDataTableHeadPins.textContent = "Pin";
+    UserDataTableHeadRow.appendChild(UserDataTableHeadPins);
+
+    const UserDataTableHeadBalance = document.createElement("th");
+    UserDataTableHeadBalance.textContent = "Balance";
+    UserDataTableHeadRow.appendChild(UserDataTableHeadBalance);
+
+    const UserDataTableBody = document.createElement("tbody");
+    UserDataTableBody.id = "userDataBody";
+    UserDataTableBody.style = "display: none;";
+    UserDataTable.appendChild(UserDataTableBody);
+
+    setTimeout(refreshPlayerData, 1000);
+};
+
 initFirebase();
 createExtConfigUI();
+createUserDataUI();
 
 autoSetAmountIfEnabled();
